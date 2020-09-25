@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>London</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
+<script src="https://unpkg.com/papaparse@latest/papaparse.min.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
+<style>
+  body { margin: 0; padding: 0; }
+  #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+  // TO MAKE THE MAP APPEAR YOU MUST
+  // ADD YOUR ACCESS TOKEN FROM
+  // https://account.mapbox.com
+  mapboxgl.accessToken = 'pk.eyJ1IjoicGJpbmtsZXkiLCJhIjoialgtdTU1OCJ9.S7qddC79rdDjzV7mbo0obw';
+    var map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: {
+            'version': 8,
+            'sources': {
+                'C2-tiles': {
+                    'type': 'raster',
+                    'tiles': [
+                        'https://maps-0.georeferencer.com//georeferences/2c18a5b8-c555-539c-86a0-4a9303089c3b/2020-02-07T14:29:00.192299Z/map/{z}/{x}/{y}.png?key=Emp8ixZfJsjmNUYwkl8f'
+                    ],
+                    'tileSize': 256,
+                    'attribution':
+                        'Map tiles by David Rumsey Map Collection'
+                },
+                'D2-tiles': {
+                    'type': 'raster',
+                    'tiles': [
+                        'https://maps-0.georeferencer.com//georeferences/fd475072-4bdd-5f6b-b5db-021d2c56c80a/2020-01-11T21:56:30.336698Z/map/{z}/{x}/{y}.png?key=Emp8ixZfJsjmNUYwkl8f'
+                    ],
+                    'tileSize': 256,
+                    'attribution':
+                        'Map tiles by David Rumsey Map Collection'
+                },
+                'osm': {
+                  'type': 'raster',
+                  'tiles': [
+                    'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
+                  ],
+                  'tilesize': 256,
+                  'attribution':
+                    'OpenStreetMap'
+                }
+            },
+            'layers': [
+                {
+                    'id': 'background',
+                    'type': 'raster',
+                    'source': 'osm',
+                    'minzoom': 0,
+                    'maxzoom': 22
+                },
+                {
+                    'id': 'C2',
+                    'type': 'raster',
+                    'source': 'C2-tiles',
+                    'minzoom': 0,
+                    'maxzoom': 22
+                },
+                {
+                    'id': 'D2',
+                    'type': 'raster',
+                    'source': 'D2-tiles',
+                    'minzoom': 0,
+                    'maxzoom': 22
+                }
+            ]
+        },
+        center: [-0.1278, 51.5074], // starting position
+        zoom: 12 // starting zoom
+    });
+
+    var marker = new mapboxgl.Marker()
+      .setLngLat([-0.1278, 51.5074])
+      .addTo(map);
+
+
+    Papa.parse("output-simple.csv", {
+      download: true,
+      header: true,
+      complete: function(results) {
+        console.log(results);
+        index = 0;
+        while (index < results["data"].length) {
+          thislocation = results["data"][index];
+          console.log(location)
+          marker = new mapboxgl.Marker()
+                .setLngLat([thislocation['lon'], thislocation['lat']])
+                .addTo(map);
+          index++; 
+        }
+      }
+    });
+</script>
+
+</body>
+</html>
